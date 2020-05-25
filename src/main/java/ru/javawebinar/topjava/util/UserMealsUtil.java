@@ -16,11 +16,6 @@ import static java.util.Collections.*;
 public class UserMealsUtil {
     public static void main(String[] args) {
         List<UserMeal> meals = Arrays.asList(
-                new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 29, 8, 30), "Завтрак", 500),
-                new UserMeal(LocalDateTime.of(2020, Month.FEBRUARY, 2, 7, 30), "Завтрак", 500),
-                new UserMeal(LocalDateTime.of(2020, Month.MARCH, 23, 7, 55), "Завтрак", 1400),
-                new UserMeal(LocalDateTime.of(2020, Month.MARCH, 23, 14, 30), "Обед", 500),
-                new UserMeal(LocalDateTime.of(2020, Month.MARCH, 23, 19, 30), "Ужин", 100),
 
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
@@ -31,10 +26,10 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
         );
 
-        List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(18, 0), LocalTime.of(21, 0), 2000);
+        List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         mealsTo.forEach(System.out::println);
 
-        System.out.println(filteredByStreams(meals, LocalTime.of(18, 0), LocalTime.of(21, 0), 2000));
+        System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
@@ -49,10 +44,7 @@ public class UserMealsUtil {
                 boolean excess = sum > caloriesPerDay;
                 listUser.add(new UserMealWithExcess(user.getDateTime(), user.getDescription(), user.getCalories(), excess));
             }
-
-
         }
-
         return listUser;
     }
 
