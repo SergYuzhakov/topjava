@@ -21,7 +21,6 @@
 
 <table>
     <tr>
-        <th>Id</th>
         <th>Date</th>
         <th>Description</th>
         <th>Calories</th>
@@ -31,7 +30,6 @@
     <c:forEach var="meal" items="${meals}">
         <tr>
         <tr style="color:${meal.excess ? '#FF4500' : '#228B22'}">
-            <td>${meal.id}</td>
             <td>${meal.dateTime}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>

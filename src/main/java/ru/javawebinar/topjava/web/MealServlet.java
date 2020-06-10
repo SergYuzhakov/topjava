@@ -20,8 +20,16 @@ import java.util.List;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
-    private static final Logger log = getLogger(UserServlet.class);
-    private MealDao mealDao = new MealDaoImpl();
+    private static Logger log;
+    private MealDao mealDao;
+
+
+    @Override
+    public void init() throws ServletException {
+        log = getLogger(MealServlet.class);
+        mealDao = new MealDaoImpl();
+
+    }
 
 
     @Override
@@ -35,22 +43,26 @@ public class MealServlet extends HttpServlet {
 
             case "delete":
                 id = Integer.parseInt(req.getParameter("id"));
+                log.debug("Delete meal with id = " + id);
                 mealDao.removeMeal(id);
                 resp.sendRedirect("meals");
                 break;
             case "edit":
                 id = Integer.parseInt(req.getParameter("id"));
+                log.debug("Update meal with id = " + id);
                 meal = mealDao.getById(id);
                 req.setAttribute("action", "Edit");
                 req.setAttribute("meal", meal);
                 req.getRequestDispatcher("edit.jsp").forward(req, resp);
                 break;
             case "add":
+                log.debug("Add new meal");
                 req.setAttribute("action", "Add");
                 req.getRequestDispatcher("edit.jsp").forward(req, resp);
                 break;
 
             default:
+                log.debug("forward to meals.jsp");
                 List<MealTo> mealTos = MealsUtil.filteredByStreams(mealDao.getMeals(), LocalTime.MIN, LocalTime.MAX, 2000);
                 RequestDispatcher requestDisp = req.getRequestDispatcher("meals.jsp");
                 req.setAttribute("meals", mealTos);
@@ -67,11 +79,13 @@ public class MealServlet extends HttpServlet {
         String date = req.getParameter("date");
         String description = req.getParameter("description");
         LocalDateTime localDateTime = LocalDateTime.parse(date);
+        Meal meal = new Meal(id, localDateTime, description, calories);
 
         if (id == 0) {
-            mealDao.create(localDateTime, description, calories);
+            log.debug("Create meal");
+            mealDao.create(meal);
         } else {
-            Meal meal = new Meal(id, localDateTime, description, calories);
+            log.debug("Update meal with id = " + id);
             mealDao.update(meal);
         }
         resp.sendRedirect("meals");
