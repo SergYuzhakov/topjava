@@ -8,11 +8,9 @@ public interface MealDao {
 
     List<Meal> getMeals();
 
-    boolean update(Meal meal);
-
     Meal getById(int id);
 
-    Meal create(Meal meal);
+    Meal save(Meal meal);
 
     void removeMeal(int id);
 

@@ -11,19 +11,21 @@ public class Meal {
 
     private final int calories;
 
-    private int id;
+    private Integer id;
 
-    public Meal(int id,LocalDateTime dateTime, String description, int calories) {
+    public Meal(Integer id,LocalDateTime dateTime, String description, int calories) {
         this.id = id;
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
-
+    public boolean isNew() {
+        return id == 0;
+    }
     public int getId() {
         return id;
     }

@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ru.javawebinar.topjava.util.TimeUtil" %><%--
   Created by IntelliJ IDEA.
   User: Serg
   Date: 07.06.2020
@@ -20,18 +20,23 @@
 <hr>
 <h2>Meals</h2>
 
-<table>
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
     <tr>
         <th>Date</th>
         <th>Description</th>
         <th>Calories</th>
         <th>Action</th>
     </tr>
+    </thead>
 
     <c:forEach var="meal" items="${meals}">
         <tr>
         <tr style="color:${meal.excess ? '#FF4500' : '#228B22'}">
-            <td>${meal.dateTime}</td>
+        <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.model.MealTo"/>
+            <td>
+                <%=TimeUtil.toString(meal.getDateTime())%>
+            </td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
             <td>

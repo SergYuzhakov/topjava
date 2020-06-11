@@ -25,7 +25,7 @@ public class MealDaoImpl implements MealDao {
                 new Meal(0, LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
                 new Meal(0, LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
         for (Meal meal : listMeals) {
-            create(meal);
+            save(meal);
         }
 
     }
@@ -33,13 +33,6 @@ public class MealDaoImpl implements MealDao {
     @Override
     public List<Meal> getMeals() {
         return new ArrayList<>(mealDaoMap.values());
-    }
-
-    @Override
-    public boolean update(Meal meal) {
-        Meal oldMeal = mealDaoMap.get(meal.getId());
-        final boolean replace = mealDaoMap.replace(meal.getId(), oldMeal, meal);
-        return replace;
     }
 
     @Override
@@ -54,9 +47,10 @@ public class MealDaoImpl implements MealDao {
     }
 
     @Override
-    public Meal create(Meal meal) {
-        Meal newMeal = new Meal(autoId.getAndIncrement(), meal.getDateTime(), meal.getDescription(), meal.getCalories());
-        mealDaoMap.put(newMeal.getId(), newMeal);
-        return newMeal;
+    public Meal save(Meal meal) {
+        if (meal.isNew()) {
+            meal.setId(autoId.getAndIncrement());
+        }
+        return mealDaoMap.put(meal.getId(), meal);
     }
 }

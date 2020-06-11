@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -40,13 +41,13 @@ public class MealServlet extends HttpServlet {
         switch (action) {
 
             case "delete":
-                id = Integer.parseInt(req.getParameter("id"));
-                log.debug("Delete meal with id = {}",id);
+                id = getId(req);
+                log.info("Delete meal with id = {}",id);
                 mealDao.removeMeal(id);
                 resp.sendRedirect("meals");
                 break;
             case "edit":
-                id = Integer.parseInt(req.getParameter("id"));
+                id = getId(req);
                 log.debug("Update meal with id = {}",id);
                 meal = mealDao.getById(id);
                 req.setAttribute("action", "Edit");
@@ -55,17 +56,24 @@ public class MealServlet extends HttpServlet {
                 break;
             case "add":
                 log.debug("Add new meal");
+                meal = new Meal(0, LocalDateTime.now(),"", 1000);
+                req.setAttribute("meal", meal);
                 req.setAttribute("action", "Add");
                 req.getRequestDispatcher("edit.jsp").forward(req, resp);
                 break;
 
             default:
-                log.debug("forward to meals.jsp");
+                log.info("Get Meals & forward to meals.jsp");
                 List<MealTo> mealTos = MealsUtil.filteredByStreams(mealDao.getMeals(), LocalTime.MIN, LocalTime.MAX, 2000);
                 RequestDispatcher requestDisp = req.getRequestDispatcher("meals.jsp");
                 req.setAttribute("meals", mealTos);
                 requestDisp.forward(req, resp);
         }
+    }
+
+    private int getId(HttpServletRequest req){
+        String paramId = Objects.requireNonNull(req.getParameter("id"));
+        return Integer.parseInt(paramId);
     }
 
     @Override
@@ -76,16 +84,9 @@ public class MealServlet extends HttpServlet {
         String date = req.getParameter("date");
         String description = req.getParameter("description");
         LocalDateTime localDateTime = LocalDateTime.parse(date);
-        log.debug("Get data - {}, {}, {}, {}",id,calories,date,description);
+        log.info("Get data - {}, {}, {}, {}",id,calories,date,description);
         Meal meal = new Meal(id, localDateTime, description, calories);
-
-        if (id == 0) {
-            log.debug("Create meal");
-            mealDao.create(meal);
-        } else {
-            log.debug("Update meal with id = {}",id);
-            mealDao.update(meal);
-        }
+        mealDao.save(meal);
         log.debug("Redirect to meals");
         resp.sendRedirect("meals");
     }
