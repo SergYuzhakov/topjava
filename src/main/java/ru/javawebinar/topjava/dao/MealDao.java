@@ -8,7 +8,7 @@ public interface MealDao {
 
     List<Meal> getMeals();
 
-    Meal update(Meal meal);
+    boolean update(Meal meal);
 
     Meal getById(int id);
 

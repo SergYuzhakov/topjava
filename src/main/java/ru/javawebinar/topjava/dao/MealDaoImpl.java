@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MealDaoImpl implements MealDao {
-    private final AtomicInteger AUTO_ID = new AtomicInteger(1);
+    private final AtomicInteger autoId = new AtomicInteger(1);
     private Map<Integer, Meal> mealDaoMap = new ConcurrentHashMap<>();
 
     public MealDaoImpl() {
@@ -36,11 +36,10 @@ public class MealDaoImpl implements MealDao {
     }
 
     @Override
-    public Meal update(Meal meal) {
-        if (mealDaoMap.containsKey(meal.getId())) {
-            mealDaoMap.merge(meal.getId(), meal, ((value1, value2) -> value2));
-        }
-        return meal;
+    public boolean update(Meal meal) {
+        Meal oldMeal = mealDaoMap.get(meal.getId());
+        final boolean replace = mealDaoMap.replace(meal.getId(), oldMeal, meal);
+        return replace;
     }
 
     @Override
@@ -56,7 +55,7 @@ public class MealDaoImpl implements MealDao {
 
     @Override
     public Meal create(Meal meal) {
-        Meal newMeal = new Meal(AUTO_ID.getAndIncrement(), meal.getDateTime(), meal.getDescription(), meal.getCalories());
+        Meal newMeal = new Meal(autoId.getAndIncrement(), meal.getDateTime(), meal.getDescription(), meal.getCalories());
         mealDaoMap.put(newMeal.getId(), newMeal);
         return newMeal;
     }

@@ -23,14 +23,12 @@ public class MealServlet extends HttpServlet {
     private static Logger log;
     private MealDao mealDao;
 
-
     @Override
     public void init() throws ServletException {
         log = getLogger(MealServlet.class);
         mealDao = new MealDaoImpl();
 
     }
-
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -43,13 +41,13 @@ public class MealServlet extends HttpServlet {
 
             case "delete":
                 id = Integer.parseInt(req.getParameter("id"));
-                log.debug("Delete meal with id = " + id);
+                log.debug("Delete meal with id = {}",id);
                 mealDao.removeMeal(id);
                 resp.sendRedirect("meals");
                 break;
             case "edit":
                 id = Integer.parseInt(req.getParameter("id"));
-                log.debug("Update meal with id = " + id);
+                log.debug("Update meal with id = {}",id);
                 meal = mealDao.getById(id);
                 req.setAttribute("action", "Edit");
                 req.setAttribute("meal", meal);
@@ -70,7 +68,6 @@ public class MealServlet extends HttpServlet {
         }
     }
 
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -79,15 +76,17 @@ public class MealServlet extends HttpServlet {
         String date = req.getParameter("date");
         String description = req.getParameter("description");
         LocalDateTime localDateTime = LocalDateTime.parse(date);
+        log.debug("Get data - {}, {}, {}, {}",id,calories,date,description);
         Meal meal = new Meal(id, localDateTime, description, calories);
 
         if (id == 0) {
             log.debug("Create meal");
             mealDao.create(meal);
         } else {
-            log.debug("Update meal with id = " + id);
+            log.debug("Update meal with id = {}",id);
             mealDao.update(meal);
         }
+        log.debug("Redirect to meals");
         resp.sendRedirect("meals");
     }
 }
