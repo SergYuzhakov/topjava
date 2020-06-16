@@ -8,6 +8,9 @@ import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Controller
@@ -41,12 +44,13 @@ public class MealRestController {
     }
 
     public List<MealTo> getAll() {
-        log.info("GetAll Meals");
+        log.info("Get All Meals from service");
         return service.getAll(SecurityUtil.authUserId());
     }
 
-    public <T extends Comparable<? super T>> List<MealTo> getAllFiltered(T start, T end){
-        log.info("GetAllFiltered by Date start = {}, Date end = {}", start, end);
-        return service.getAllFiltered(SecurityUtil.authUserId(),start, end);
+    public List<MealTo> getAllFiltered(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime){
+        log.info("GetAllFiltered from service by Date start = {},  end = {} and Time start = {}, end = {}", startDate, endDate, startTime, endTime);
+        return service.getAllFiltered(SecurityUtil.authUserId(),startDate, endDate, startTime, endTime);
     }
+
 }

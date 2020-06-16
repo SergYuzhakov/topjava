@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -23,7 +25,14 @@ public class MealServlet extends HttpServlet {
     private ConfigurableApplicationContext appCtx;
     private MealRestController mrc;
 
-   // private MealRepository repository;
+    // private MealRepository repository;
+
+
+    @Override
+    public void destroy() {
+        appCtx.close();
+        super.destroy();
+    }
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -45,11 +54,10 @@ public class MealServlet extends HttpServlet {
                 Integer.parseInt(request.getParameter("calories")));
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-       // repository.save(meal, SecurityUtil.authUserId());
-        if(meal.isNew()) {
+        // repository.save(meal, SecurityUtil.authUserId());
+        if (meal.isNew()) {
             mrc.create(meal);
-        }
-        else {
+        } else {
             mrc.update(meal, meal.getId());
         }
         response.sendRedirect("meals");
@@ -67,11 +75,20 @@ public class MealServlet extends HttpServlet {
                 mrc.delete(id);
                 response.sendRedirect("meals");
                 break;
+            case "filter":
+                log.info("Filtered request");
+                LocalDate ldStart = request.getParameter("dateFrom").isEmpty() ? LocalDate.MIN : LocalDate.parse(request.getParameter("dateFrom"));
+                LocalDate ldEnd = request.getParameter("dateTo").isEmpty() ? LocalDate.MAX : LocalDate.parse(request.getParameter("dateTo")).plusDays(1);
+                LocalTime ltStart = request.getParameter("timeFrom").isEmpty() ? LocalTime.MIN : LocalTime.parse(request.getParameter("timeFrom"));
+                LocalTime ltEnd = request.getParameter("timeTo").isEmpty() ? LocalTime.MAX : LocalTime.parse(request.getParameter("timeTo"));
+                request.setAttribute("meals", mrc.getAllFiltered(ldStart, ldEnd, ltStart, ltEnd));
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
+                break;
             case "create":
             case "update":
                 final Meal meal = "create".equals(action) ?
-                        new Meal(SecurityUtil.authUserId(),LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
-                       // repository.get(getId(request), SecurityUtil.authUserId());
+                        new Meal(SecurityUtil.authUserId(), LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
+                        // repository.get(getId(request), SecurityUtil.authUserId());
                         mrc.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
@@ -81,7 +98,7 @@ public class MealServlet extends HttpServlet {
                 log.info("getAll");
                 request.setAttribute("meals",
                         mrc.getAll());
-                        //MealsUtil.getTos(repository.getAll(SecurityUtil.authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY));
+                //MealsUtil.getTos(repository.getAll(SecurityUtil.authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

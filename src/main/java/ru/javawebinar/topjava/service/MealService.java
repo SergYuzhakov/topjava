@@ -4,11 +4,11 @@ import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
@@ -41,8 +41,9 @@ public class MealService {
         return MealsUtil.getTos(repository.getAll(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
-    public <T extends Comparable<? super T>> List<MealTo> getAllFiltered(int userId, T start, T end) {
-        Predicate<Meal> mealPredicate = meal -> DateTimeUtil.isBetweenHalfOpen((T) meal.getDateTime(), start, end);
-        return MealsUtil.filterByPredicate(repository.getAllFiltered(userId, start, end), MealsUtil.DEFAULT_CALORIES_PER_DAY, mealPredicate);
+
+    public List<MealTo> getAllFiltered(int userId, LocalDate startD, LocalDate endD, LocalTime startT, LocalTime endT) {
+        return MealsUtil.getTos(repository.getAllFilteredMeals(userId, startD, endD, startT, endT), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
+
 }

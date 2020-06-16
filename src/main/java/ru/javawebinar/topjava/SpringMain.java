@@ -28,8 +28,7 @@ public class SpringMain {
             mrc.getAll().stream().forEach(System.out::println);
             Meal meal2 = new Meal(8, SecurityUtil.authUserId(), LocalDateTime.of(2019, Month.MARCH, 29, 10, 0), "Ужин", 1099);
             mrc.update(meal2, meal.getId());
-            mrc.getAllFiltered(LocalDateTime.of(2020, 01, 30, 10, 00), LocalDateTime.of(2020, 01, 31, 10, 0))
-                    .stream().forEach(System.out::println);
+
             System.out.println(mrc.get(meal.getId()));
             mrc.delete(meal.getId());
 
