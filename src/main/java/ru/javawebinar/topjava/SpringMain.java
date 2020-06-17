@@ -22,11 +22,11 @@ public class SpringMain {
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
 // Test MealResrController metods
             MealRestController mrc = appCtx.getBean(MealRestController.class);
-            Meal meal = mrc.create(new Meal(SecurityUtil.authUserId(), LocalDateTime.of(2020, Month.MARCH, 29, 10, 0), "Завтрак", 499));
+            Meal meal = mrc.create(new Meal(LocalDateTime.of(2020, Month.MARCH, 29, 10, 0), "Завтрак", 499,1));
             System.out.println(meal);
             mrc.get(meal.getId());
             mrc.getAll().stream().forEach(System.out::println);
-            Meal meal2 = new Meal(8, SecurityUtil.authUserId(), LocalDateTime.of(2019, Month.MARCH, 29, 10, 0), "Ужин", 1099);
+            Meal meal2 = new Meal(8,LocalDateTime.of(2019, Month.MARCH, 29, 10, 0), "Ужин", 1099, 1);
             mrc.update(meal2, meal.getId());
 
             System.out.println(mrc.get(meal.getId()));

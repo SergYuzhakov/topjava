@@ -9,9 +9,11 @@ import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+
+import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
 @Controller
 public class MealRestController {
@@ -30,6 +32,7 @@ public class MealRestController {
 
     public Meal create(Meal meal) {
         log.info("Create meal for userID = {}", SecurityUtil.authUserId());
+        checkNew(meal);
         return service.create(meal, SecurityUtil.authUserId());
     }
 
@@ -40,6 +43,7 @@ public class MealRestController {
 
     public void update(Meal meal, int id) {
         log.info("Update meal with id = {}, for userId = {}", id, SecurityUtil.authUserId());
+        assureIdConsistent(meal, id);
         service.update(meal, SecurityUtil.authUserId());
     }
 
@@ -48,9 +52,13 @@ public class MealRestController {
         return service.getAll(SecurityUtil.authUserId());
     }
 
-    public List<MealTo> getAllFiltered(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime){
+    public List<MealTo> getAllFiltered(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("GetAllFiltered from service by Date start = {},  end = {} and Time start = {}, end = {}", startDate, endDate, startTime, endTime);
-        return service.getAllFiltered(SecurityUtil.authUserId(),startDate, endDate, startTime, endTime);
+        return service.getAllFiltered(SecurityUtil.authUserId(),
+                startDate == null ? LocalDate.MIN : startDate,
+                endDate == null ? LocalDate.MAX : endDate,
+                startTime == null ? LocalTime.MIN : startTime,
+                endTime == null ? LocalTime.MAX : endTime);
     }
 
 }

@@ -5,6 +5,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -38,12 +39,13 @@ public class MealService {
     }
 
     public List<MealTo> getAll(int userId) {
-        return MealsUtil.getTos(repository.getAll(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return MealsUtil.getTos(repository.getAll(userId), SecurityUtil.authUserCaloriesPerDay());
     }
 
-
     public List<MealTo> getAllFiltered(int userId, LocalDate startD, LocalDate endD, LocalTime startT, LocalTime endT) {
-        return MealsUtil.getTos(repository.getAllFilteredMeals(userId, startD, endD, startT, endT), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return MealsUtil.getFilteredTos(repository.getAllFilteredMeals(userId, startD, endD)
+                , SecurityUtil.authUserCaloriesPerDay()
+                , startT, endT);
     }
 
 }

@@ -9,9 +9,8 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,7 +28,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal, int userId) {
-        if (meal.isNew() && userId == meal.getUserId()) {
+        if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             repository.put(meal.getId(), meal);
             return meal;
@@ -43,7 +42,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        if (userId != repository.get(id).getUserId()) {
+        if (userId != get(id, userId).getUserId()) {
             return false;
         }
         return repository.remove(id) != null;
@@ -51,32 +50,32 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        if (userId != repository.get(id).getUserId()) {
-            return null;
-        }
-        return repository.get(id);
+        Meal meal = repository.get(id);
+        return userId != meal.getUserId() ? null : meal;
     }
 
 
     @Override
-    public Collection<Meal> getAll(int userId) {
+    public List<Meal> getAll(int userId) {
         log.info("Get All Meals from repository for userId = {}", userId);
+        return getMealsByUserId(userId);
+    }
+
+    @Override
+    public List<Meal> getAllFilteredMeals(int userId, LocalDate startD, LocalDate endD) {
+        log.debug("Filtered Meals from repository by Date start = {}, end = {} ", startD, endD);
+        return getMealsByUserId(userId).stream()
+                .filter(meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalDate(), startD, endD))
+                .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<Meal> getMealsByUserId(int userId) {
         return repository.values().stream()
                 .filter(meal -> meal.getUserId() == userId)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public Collection<Meal> getAllFilteredMeals(int userId, LocalDate startD, LocalDate endD, LocalTime startT, LocalTime endT) {
-        log.debug("Filtered Meals from repository by Date start = {}, end = {} then Time start = {}, end = {}", startD, endD, startT, endT);
-        return getAll(userId).stream()
-                .filter(meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startD, endD))
-                .filter(meal -> DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startT, endT))
-                .collect(Collectors.toList());
-
-    }
-
-
 }
 

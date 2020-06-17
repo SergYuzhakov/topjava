@@ -23,9 +23,7 @@ public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
 
     private ConfigurableApplicationContext appCtx;
-    private MealRestController mrc;
-
-    // private MealRepository repository;
+    private MealRestController mealRestController;
 
 
     @Override
@@ -38,8 +36,8 @@ public class MealServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
-        mrc = appCtx.getBean(MealRestController.class);
-        //repository = new InMemoryMealRepository();
+        mealRestController = appCtx.getBean(MealRestController.class);
+
     }
 
     @Override
@@ -48,17 +46,17 @@ public class MealServlet extends HttpServlet {
         String id = request.getParameter("id");
 
         Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                SecurityUtil.authUserId(),
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
-                Integer.parseInt(request.getParameter("calories")));
+                Integer.parseInt(request.getParameter("calories")),
+                SecurityUtil.authUserId());
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        // repository.save(meal, SecurityUtil.authUserId());
+
         if (meal.isNew()) {
-            mrc.create(meal);
+            mealRestController.create(meal);
         } else {
-            mrc.update(meal, meal.getId());
+            mealRestController.update(meal, meal.getId());
         }
         response.sendRedirect("meals");
     }
@@ -71,25 +69,24 @@ public class MealServlet extends HttpServlet {
             case "delete":
                 int id = getId(request);
                 log.info("Delete {}", id);
-                //repository.delete(id, SecurityUtil.authUserId());
-                mrc.delete(id);
+
+                mealRestController.delete(id);
                 response.sendRedirect("meals");
                 break;
             case "filter":
                 log.info("Filtered request");
-                LocalDate ldStart = request.getParameter("dateFrom").isEmpty() ? LocalDate.MIN : LocalDate.parse(request.getParameter("dateFrom"));
-                LocalDate ldEnd = request.getParameter("dateTo").isEmpty() ? LocalDate.MAX : LocalDate.parse(request.getParameter("dateTo")).plusDays(1);
-                LocalTime ltStart = request.getParameter("timeFrom").isEmpty() ? LocalTime.MIN : LocalTime.parse(request.getParameter("timeFrom"));
-                LocalTime ltEnd = request.getParameter("timeTo").isEmpty() ? LocalTime.MAX : LocalTime.parse(request.getParameter("timeTo"));
-                request.setAttribute("meals", mrc.getAllFiltered(ldStart, ldEnd, ltStart, ltEnd));
+                LocalDate ldStart = request.getParameter("dateFrom").isEmpty() ? null : LocalDate.parse(request.getParameter("dateFrom"));
+                LocalDate ldEnd =  request.getParameter("dateTo").isEmpty() ?  null : LocalDate.parse(request.getParameter("dateTo")).plusDays(1);
+                LocalTime ltStart = request.getParameter("timeFrom").isEmpty() ? null : LocalTime.parse(request.getParameter("timeFrom"));
+                LocalTime ltEnd = request.getParameter("timeTo").isEmpty() ? null : LocalTime.parse(request.getParameter("timeTo"));
+                request.setAttribute("meals", mealRestController.getAllFiltered(ldStart, ldEnd, ltStart, ltEnd));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
             case "create":
             case "update":
                 final Meal meal = "create".equals(action) ?
-                        new Meal(SecurityUtil.authUserId(), LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
-                        // repository.get(getId(request), SecurityUtil.authUserId());
-                        mrc.get(getId(request));
+                        new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000, SecurityUtil.authUserId()) :
+                        mealRestController.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
@@ -97,8 +94,7 @@ public class MealServlet extends HttpServlet {
             default:
                 log.info("getAll");
                 request.setAttribute("meals",
-                        mrc.getAll());
-                //MealsUtil.getTos(repository.getAll(SecurityUtil.authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY));
+                        mealRestController.getAll());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
