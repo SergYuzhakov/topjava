@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 public interface MealRepository {
     // null if not found, when updated
@@ -22,7 +23,7 @@ public interface MealRepository {
 
     List<Meal> getAllFilteredMeals(int userId, LocalDate startD, LocalDate endD);
 
-    List<Meal> getMealsByUserId(int userId);
+    List<Meal> getMealsByUserId(int userId, Predicate<Meal> filter);
 
 
 }

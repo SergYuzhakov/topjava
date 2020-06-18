@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletConfig;
@@ -18,6 +19,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+
+import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
+import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
@@ -75,10 +79,10 @@ public class MealServlet extends HttpServlet {
                 break;
             case "filter":
                 log.info("Filtered request");
-                LocalDate ldStart = request.getParameter("dateFrom").isEmpty() ? null : LocalDate.parse(request.getParameter("dateFrom"));
-                LocalDate ldEnd =  request.getParameter("dateTo").isEmpty() ?  null : LocalDate.parse(request.getParameter("dateTo")).plusDays(1);
-                LocalTime ltStart = request.getParameter("timeFrom").isEmpty() ? null : LocalTime.parse(request.getParameter("timeFrom"));
-                LocalTime ltEnd = request.getParameter("timeTo").isEmpty() ? null : LocalTime.parse(request.getParameter("timeTo"));
+                LocalDate ldStart = parseLocalDate(request.getParameter("dateFrom"));
+                LocalDate ldEnd =  parseLocalDate(request.getParameter("dateTo"));
+                LocalTime ltStart = parseLocalTime(request.getParameter("timeFrom"));
+                LocalTime ltEnd = parseLocalTime(request.getParameter("timeTo"));
                 request.setAttribute("meals", mealRestController.getAllFiltered(ldStart, ldEnd, ltStart, ltEnd));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;

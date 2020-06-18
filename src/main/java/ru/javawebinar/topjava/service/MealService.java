@@ -38,14 +38,12 @@ public class MealService {
         checkNotFoundWithId(repository.save(meal, userId), userId);
     }
 
-    public List<MealTo> getAll(int userId) {
-        return MealsUtil.getTos(repository.getAll(userId), SecurityUtil.authUserCaloriesPerDay());
+    public List<Meal> getAll(int userId) {
+        return repository.getAll(userId);
     }
 
-    public List<MealTo> getAllFiltered(int userId, LocalDate startD, LocalDate endD, LocalTime startT, LocalTime endT) {
-        return MealsUtil.getFilteredTos(repository.getAllFilteredMeals(userId, startD, endD)
-                , SecurityUtil.authUserCaloriesPerDay()
-                , startT, endT);
+    public List<Meal> getAllFiltered(int userId, LocalDate startD, LocalDate endD) {
+        return repository.getAllFilteredMeals(userId, startD, endD);
     }
 
 }
