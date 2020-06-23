@@ -71,7 +71,7 @@ public class MealServiceTest {
     @Test
     public void getAll() {
         List<Meal> allMealUser = mealService.getAll(USER_ID);
-        assertMatch(allMealUser, MEAL_USER_1, MEAL_USER_2, MEAL_USER_3, MEAL_USER_4, MEAL_USER_5, MEAL_USER_6, MEAL_USER_7);
+        assertMatch(allMealUser, MEAL_USER_7, MEAL_USER_6, MEAL_USER_5, MEAL_USER_4, MEAL_USER_3, MEAL_USER_2, MEAL_USER_1);
     }
 
     @Test
@@ -89,7 +89,8 @@ public class MealServiceTest {
     @Test
     public void create() {
         Meal meal = MealTestData.getNew();
-        mealService.create(meal, USER_ID);
+        Meal mealCreated = mealService.create(meal, USER_ID);
+        assertMatch(mealCreated, meal);
         assertMatch(mealRepository.get(meal.getId(), USER_ID), meal);
     }
 }
