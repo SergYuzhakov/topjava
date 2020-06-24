@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
@@ -14,6 +15,8 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 import static org.junit.Assert.assertNull;
@@ -92,5 +95,11 @@ public class MealServiceTest {
         Meal mealCreated = mealService.create(meal, USER_ID);
         assertMatch(mealCreated, meal);
         assertMatch(mealRepository.get(meal.getId(), USER_ID), meal);
+    }
+
+    @Test
+    public void duplicateDateTime(){
+        Meal meal = new Meal(null, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак1", 400);
+        assertThrows(DataAccessException.class,() -> mealService.create(meal, USER_ID));
     }
 }
