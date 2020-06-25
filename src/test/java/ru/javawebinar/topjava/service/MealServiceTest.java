@@ -31,11 +31,14 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
+ /*
     static {
         // Only for postgres driver logging
         // It uses java.util.logging and logged via jul-to-slf4j bridge
         SLF4JBridgeHandler.install();
     }
+   Вместо этого статичного блока можно использовать метод Spring  -  MethodInvokingBean, прописав его в spring-db.xml
+   */
 
     @Autowired
     private MealService mealService;
@@ -81,7 +84,7 @@ public class MealServiceTest {
     public void update() {
         Meal meal = MealTestData.getUpdated();
         mealService.update(meal, USER_ID);
-        assertMatch(mealService.get(MEAL_ID_1, USER_ID), meal);
+        assertMatch(mealService.get(MEAL_ID_1, USER_ID), getUpdated()); // сравниваем апдейтнутую еду с эталоном(getUpdated())
     }
 
     @Test
@@ -91,9 +94,11 @@ public class MealServiceTest {
 
     @Test
     public void create() {
+        Meal mealCreated = mealService.create(getNew(), USER_ID);
+        Integer newId = mealCreated.getId();
         Meal meal = MealTestData.getNew();
-        Meal mealCreated = mealService.create(meal, USER_ID);
-        assertMatch(mealCreated, meal);
+        meal.setId(newId);
+        assertMatch(mealCreated, meal); // сравниваем вновь созданную еду с эталоной новой едой
         assertMatch(mealRepository.get(meal.getId(), USER_ID), meal);
     }
 
