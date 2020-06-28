@@ -1,4 +1,5 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e14325a4cdbd4debb5f3f8df552328bf)](https://www.codacy.com/manual/SergYuzhakov/topjava?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SergYuzhakov/topjava&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/SergYuzhakov/topjava.svg?branch=master)](https://travis-ci.org/SergYuzhakov/topjava)
 
 Java Enterprise Online Project 
 ===============================
