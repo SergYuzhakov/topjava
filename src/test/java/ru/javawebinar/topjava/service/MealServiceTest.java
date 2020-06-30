@@ -57,7 +57,7 @@ public class MealServiceTest {
         StringBuilder strData = new StringBuilder();
         strData.append(String.format("%n%-25s%-15s%n", "NAME TEST", "WORKTIME"));
         for (Map.Entry<String, Long> map : statisticMap.entrySet()) {
-            strData.append(String.format("%-25s%-5s ms %n", map.getKey(), map.getValue().toString()));
+            strData.append(String.format("%-25s%-5s ms %n", map.getKey(), map.getValue()));
         }
         log.info(strData.toString());
     }

@@ -33,8 +33,9 @@ public class Meal extends AbstractBaseEntity {
     @Max(5000)
     private int calories;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false) // optional - If set to false then a non-null relationship must always exist.
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @NotNull
     private User user;
 
     public Meal() {
