@@ -48,17 +48,18 @@ public class MealServiceTest {
             String str = description.getMethodName();
             long executeTime = TimeUnit.NANOSECONDS.toMillis(nanos);
             statisticMap.put(str, executeTime);
-            log.info("Name - {}, Time - {}", str, executeTime);
+            log.info("Name test - {}, Work time - {} ms", str, executeTime);
         }
     };
 
     @AfterClass
     public static void printStatistic() {
-        System.out.printf("%-25s %-15s %n", "NAME TEST", "WORKTIME");
+        StringBuilder strData = new StringBuilder();
+        strData.append(String.format("%n%-25s%-15s%n", "NAME TEST", "WORKTIME"));
         for (Map.Entry<String, Long> map : statisticMap.entrySet()) {
-            System.out.printf("%-25s %-5d mc %n", map.getKey(), map.getValue());
-
+            strData.append(String.format("%-25s%-5s ms %n", map.getKey(), map.getValue().toString()));
         }
+        log.info(strData.toString());
     }
 
     @Test

@@ -49,9 +49,7 @@ public class JpaMealRepository implements MealRepository {
     @Transactional
     public Meal get(int id, int userId) {
         Meal getMeal = em.find(Meal.class, id);
-        if (getMeal != null && getMeal.getUser().getId() == userId) {
-            return getMeal;
-        } else return null;
+        return getMeal != null && getMeal.getUser().getId() == userId ? getMeal : null;
 
     }
 
