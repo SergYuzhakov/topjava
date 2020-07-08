@@ -7,7 +7,6 @@ import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -43,8 +42,6 @@ public abstract class ServiceTest {
         }
     };
 
-    @Autowired
-    private MealService service;
 
     @AfterClass
     public static void printResult() {
@@ -53,6 +50,7 @@ public abstract class ServiceTest {
                 "\n---------------------------------" +
                 results +
                 "\n---------------------------------");
+        results.setLength(0);
     }
 
 }
