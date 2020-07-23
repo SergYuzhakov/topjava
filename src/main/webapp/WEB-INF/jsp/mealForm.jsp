@@ -11,7 +11,7 @@
     <h2><spring:message code="mealform.title.${param.id == null ? 'create' : 'update'}"/></h2>
 
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
-    <form method="post" action="${pageContext.request.contextPath}/save">
+    <form method="post" action="meals/save">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
             <dt><spring:message code="meal.datetime"/></dt>
