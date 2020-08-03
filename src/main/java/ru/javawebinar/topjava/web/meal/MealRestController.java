@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -60,4 +63,20 @@ public class MealRestController extends AbstractMealController {
                                    @RequestParam(value = "endDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime) {
         return super.getBetween(startDateTime.toLocalDate(), startDateTime.toLocalTime(), endDateTime.toLocalDate(), endDateTime.toLocalTime());
     }
+
+    @GetMapping("/filter")
+    public List<MealTo> getBetween(
+            @RequestParam(value = "startDate", required = false) LocalDate startDate,
+            @RequestParam(value = "startTime", required = false) LocalTime startTime,
+            @RequestParam(value = "endDate", required = false) LocalDate endDate,
+            @RequestParam(value = "endTime", required = false) LocalTime endTime) {
+        return super.getBetween(
+                startDate != null ? startDate : DateTimeUtil.MIN_DATE.toLocalDate(),
+                startTime != null ? startTime : LocalTime.MIN,
+                endDate != null ? endDate : DateTimeUtil.MAX_DATE.toLocalDate(),
+                endTime != null ? endTime : LocalTime.MAX
+        );
+
+    }
+
 }

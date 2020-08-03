@@ -96,4 +96,24 @@ class MealRestControllerTest extends AbstractControllerTest {
                         MealsUtil.createTo(MEAL1, false))));
 
     }
+
+    @Test
+    void filter() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "/filter?startDate=2020-01-30&startTime=07:00&endDate=2020-01-30&endTime=23:00"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(MEALTO_MATCHER.contentJsonTo(List.of(MealsUtil.createTo(MEAL3, false),
+                        MealsUtil.createTo(MEAL2, false),
+                        MealsUtil.createTo(MEAL1, false))));
+
+    }
+
+    @Test
+    void filterAll() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "/filter?startDate=&endTime="))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(MEALTO_MATCHER.contentJsonTo(MealsUtil.getTos(MEALS, SecurityUtil.authUserCaloriesPerDay())));
+
+    }
 }
