@@ -5,7 +5,7 @@ function makeEditable(ctx) {
     form = $('#detailsForm');
     $(".delete").click(function () {
         if (confirm('Are you sure?')) {
-            deleteRow($(this).attr("id"));
+           deleteRow($(this).closest('tr').attr("data-id"));
         }
     });
 
@@ -28,7 +28,7 @@ function deleteRow(id) {
         type: "DELETE"
     }).done(function () {
         updateTable();
-        successNoty("Deleted");
+        successNoty("Del");
     });
 }
 
@@ -62,7 +62,7 @@ function closeNoty() {
 function successNoty(text) {
     closeNoty();
     new Noty({
-        text: "<span class='fa fa-lg fa-check'></span> &nbsp;" + text,
+        text: "<span class='fa fa-lg fa-check'></span> &nbsp;" + text + "OK",
         type: 'success',
         layout: "bottomRight",
         timeout: 1000
