@@ -1,6 +1,6 @@
 $(function () {
     makeEditable({
-            ajaxUrl: "ajax/meals/",
+            ajaxUrl: "profile/meals/",
             datatableApi: $("#datatable").DataTable({
                 "paging": false,
                 "info": true,
@@ -31,8 +31,18 @@ $(function () {
                     ]
                 ]
             }),
-
-        }
-    );
+            update: filter
+        });
 });
 
+function filter(){
+    $.ajax({
+        type: "GET",
+        url: "profile/meals/between",
+        data: $("#filterForm").serialize()
+        }).done(updateTableByData);
+}
+function clearFilter() {
+    $("#filterForm")[0].reset();
+    $.get("profile/meals/", updateTableByData)
+}

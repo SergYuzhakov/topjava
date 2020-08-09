@@ -27,11 +27,11 @@
                             <input class="form-control" type="date" name="endDate" id="endDate"
                                    value="${param.endDate}">
                         </div>
-                        <div class="col-3">
+                        <div class="offset-2 col-2">
                             <label for="startTime"><spring:message code="meal.startTime"/></label>
                             <input type="time" name="startTime" id="startTime" value="${param.startTime}">
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             <label for="endTime"><spring:message code="meal.endTime"/></label>
                             <input type="time" name="endTime" id="endTime" value="${param.endTime}">
                         </div>
@@ -40,6 +40,11 @@
             </div>
 
             <div class="card-footer text-center">
+                <button class="btn btn-danger" onclick="clearFilter()">
+                    <span class="fa fa-remove"></span>
+                    <spring:message code="common.cancel"/>
+                </button>
+
                 <button class="btn-primary" onclick="filter()">
                     <span class="fa fa-filter"></span>
                     <spring:message code="meal.filter"/>
