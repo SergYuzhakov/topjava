@@ -54,4 +54,11 @@ public class AdminRestController extends AbstractUserController {
     public User getByMail(@RequestParam String email) {
         return super.getByMail(email);
     }
+
+    @Override
+    @PatchMapping("/{id}") // используется когда модифицируется не все Entity а его часть
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void enable(int id, boolean enabled) {
+        super.enable(id, enabled);
+    }
 }
