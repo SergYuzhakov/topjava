@@ -56,9 +56,15 @@ public class AdminRestController extends AbstractUserController {
     }
 
     @Override
-    @PatchMapping("/{id}") // используется когда модифицируется не все Entity а его часть
+    @PatchMapping("/{id}") //  patch используется когда модифицируется не все Entity а его часть
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void enable(int id, boolean enabled) {
         super.enable(id, enabled);
     }
+
+    @GetMapping("/{id}/with-meals")
+    public User getWithMeals(@PathVariable int id) {
+        return super.getWithMeals(id);
+    }
+
 }

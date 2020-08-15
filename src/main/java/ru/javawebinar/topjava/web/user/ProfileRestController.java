@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.User;
 
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
+import static ru.javawebinar.topjava.web.SecurityUtil.setAuthUserId;
 
 @RestController
 @RequestMapping(ProfileRestController.REST_URL)
@@ -32,5 +33,10 @@ public class ProfileRestController extends AbstractUserController {
     @GetMapping(value = "/text")
     public String testUTF() {
         return "Русский текст";
+    }
+
+    @GetMapping(value = "/with-meals", produces = MediaType.APPLICATION_JSON_VALUE)
+    public User getWithMeals() {
+        return super.getWithMeals(authUserId());
     }
 }
