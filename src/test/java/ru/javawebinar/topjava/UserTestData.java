@@ -2,6 +2,7 @@ package ru.javawebinar.topjava;
 
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.util.Collections;
 import java.util.Date;
@@ -12,11 +13,11 @@ import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class UserTestData {
-    public static TestMatcher<User> USER_MATCHER = TestMatcher.usingFieldsWithIgnoringAssertions(User.class, "registered", "meals");
+    public static TestMatcher<User> USER_MATCHER = TestMatcher.usingFieldsWithIgnoringAssertions(User.class, "registered", "meals", "password");
     public static TestMatcher<User> USER_WITH_MEALS_MATCHER =
             TestMatcher.usingAssertions(User.class,
                     (a, e) -> assertThat(a).usingRecursiveComparison()
-                            .ignoringFields("registered", "meals.user").ignoringAllOverriddenEquals().isEqualTo(e),
+                            .ignoringFields("registered", "meals.user", "password").ignoringAllOverriddenEquals().isEqualTo(e),
                     (a, e) -> {
                         throw new UnsupportedOperationException();
                     });
@@ -43,5 +44,9 @@ public class UserTestData {
         updated.setCaloriesPerDay(330);
         updated.setRoles(Collections.singletonList(Role.ADMIN));
         return updated;
+    }
+
+    public static String jsonWithPassword(User user, String passw) {
+        return JsonUtil.writeAdditionProps(user, "password", passw);
     }
 }
